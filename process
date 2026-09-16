@@ -1,0 +1,22 @@
+#!/path/to/venv/python3
+
+from mwdblib import MWDB
+from os import walk
+
+PROCESS_DIR = "/path/to/base/folder"
+API_KEY = "key_goes_here"
+API_URL = "http://url/api/"
+
+mwdb = MWDB(api_url=API_URL, api_key=API_KEY)
+case_tag = ""
+
+for folder in walk(PROCESS_DIR):
+    if folder[0] == PROCESS_DIR:
+        continue
+    case_tag = folder[0].split("/")[-1]
+    folder_path = folder[0]
+
+    for (folder, names, files) in walk(folder_path):
+        for filename in files:
+            with open(f"{folder}/{filename}", "rb") as f:
+                file_obj = mwdb.upload_file(filename, f, attributes={"1_case_name": case_tag})
